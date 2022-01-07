@@ -1,6 +1,9 @@
 import View from '../common/View.js';
 import { $ } from '../utils/index.js';
 import validator from '../utils/validator.js';
+import vendingMachineStore, {
+  ACTION_ADD_PRODUCT,
+} from '../store/vendingMachineStore.js';
 
 /**
  * @typedef {Object} Product
@@ -11,13 +14,8 @@ import validator from '../utils/validator.js';
 
 export default class ProductManageMenu extends View {
   constructor(props) {
-    /**
-     * @type {{products: Product[]}}
-     */
-    const defaultState = {
-      products: [],
-    };
-    super(props, defaultState);
+    vendingMachineStore.subscribe(() => this.render());
+    super(props);
   }
 
   addProduct() {
@@ -34,25 +32,14 @@ export default class ProductManageMenu extends View {
     }
 
     const newProduct = { name, price, quantity };
-
-    const products = this.state.products.slice();
-    const originProductIndex = products.findIndex(
-      ({ name }) => name === newProduct.name
-    );
-
-    if (originProductIndex > -1) {
-      products.splice(originProductIndex, 1, newProduct);
-    } else {
-      products.push(newProduct);
-    }
-
-    this.setState({
-      products,
+    vendingMachineStore.dispatch({
+      type: ACTION_ADD_PRODUCT,
+      payload: newProduct,
     });
   }
 
   render() {
-    const { products } = this.state;
+    const products = vendingMachineStore.getState('products');
     const productsBlock = products
       .map(
         ({ name, price, quantity }) => `
