@@ -4,11 +4,14 @@ import localStorageUtils from '../utils/localStorageUtils.js';
 export default class Store {
   constructor({ name, defaultState }) {
     this.name = name;
-    this.state = localStorageUtils.getState(name) || defaultState;
+    this.state = {
+      ...defaultState,
+      ...localStorageUtils.getState(name),
+    };
     this.listeners = [];
   }
 
-  getState(key) {
+  getters(key) {
     return deepClone(this.state[key]);
   }
 

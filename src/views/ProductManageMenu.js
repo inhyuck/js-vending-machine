@@ -39,7 +39,7 @@ export default class ProductManageMenu extends View {
   }
 
   render() {
-    const products = vendingMachineStore.getState('products');
+    const products = vendingMachineStore.getters('products');
     const productsBlock = products
       .map(
         ({ name, price, quantity }) => `

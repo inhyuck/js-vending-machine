@@ -1,42 +1,33 @@
 import View from '../common/View.js';
 import { $ } from '../utils/index.js';
-import { COIN_INFO, COIN_TYPE } from '../consts/coin.js';
+import { COIN_INFO } from '../consts/coin.js';
 import vendingMachineManageService from '../services/vendingMachineManageService.js';
-import validator from "../utils/validator.js";
+import validator from '../utils/validator.js';
+import vendingMachineStore, {
+  ACTION_CHARGE_COINS,
+} from '../store/vendingMachineStore.js';
 
 export default class VendingMachineManageMenu extends View {
   constructor(props) {
-    const defaultState = {
-      coins: {
-        [COIN_TYPE.UNIT_500]: 0,
-        [COIN_TYPE.UNIT_100]: 0,
-        [COIN_TYPE.UNIT_50]: 0,
-        [COIN_TYPE.UNIT_10]: 0,
-      },
-    };
-    super(props, defaultState);
+    vendingMachineStore.subscribe(() => this.render());
+    super(props);
   }
 
-  chargeCoin() {
-    const { coins: originCoins } = this.state;
+  chargeCoins() {
     const amount = $('#vending-machine-charge-input').value;
 
     if (!validator.validateVendingMachineAmount(amount)) {
       return;
     }
 
-    const newCoins = vendingMachineManageService.convertToCoins(amount);
-    const mergedCoins = vendingMachineManageService.mergeCoins(
-      originCoins,
-      newCoins
-    );
-    this.setState({
-      coins: mergedCoins,
+    vendingMachineStore.dispatch({
+      type: ACTION_CHARGE_COINS,
+      payload: amount,
     });
   }
 
   render() {
-    const { coins } = this.state;
+    const coins = vendingMachineStore.getters('coins');
 
     const totalAmount = vendingMachineManageService.computeTotalAmount(coins);
     const coinsBlock = Object.entries(coins)
@@ -79,7 +70,7 @@ export default class VendingMachineManageMenu extends View {
   bindEvents() {
     this.$el.addEventListener('click', ({ target }) => {
       if (target.getAttribute('data-ref') === 'charge-coin') {
-        this.chargeCoin();
+        this.chargeCoins();
         return;
       }
     });
