@@ -3,6 +3,7 @@ import View from './common/View.js';
 import { $ } from './utils/index.js';
 import routerUtils from './utils/routerUtils.js';
 import VendingMachineManageMenu from './views/VendingMachineManageMenu.js';
+import ProductPurchaseMenu from './views/ProductPurchaseMenu.js';
 
 export default class VendingMachineApp extends View {
   render() {
@@ -38,23 +39,29 @@ export default class VendingMachineApp extends View {
       return;
     }
 
+    const routeViewEl = $('[data-component="route-view"]');
     switch (routeName) {
       case '':
       case 'product-manage-menu':
         this.components[routeName] = new ProductManageMenu({
-          $el: $('[data-component="route-view"]'),
+          $el: routeViewEl,
           name: 'ProductManageMenu',
         });
         return;
 
       case 'vending-machine-manage-menu':
         this.components[routeName] = new VendingMachineManageMenu({
-          $el: $('[data-component="route-view"]'),
+          $el: routeViewEl,
           name: 'VendingMachineManageMenu',
         });
         return;
 
       case 'product-purchase-menu':
+        this.components[routeName] = new ProductPurchaseMenu({
+          $el: routeViewEl,
+          name: 'ProductPurchaseMenu',
+        });
+        return;
     }
   }
 }
