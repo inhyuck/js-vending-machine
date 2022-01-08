@@ -3,6 +3,7 @@ import localStorageUtils from '../utils/localStorageUtils.js';
 export default class View {
   constructor(props, defaultState) {
     const { $el, name } = props;
+    this.props = props;
     this.$el = $el;
     this.name = name;
     this.components = {};

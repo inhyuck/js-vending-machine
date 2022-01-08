@@ -20,8 +20,8 @@ export default class ProductManageMenu extends View {
 
   addProduct() {
     const name = $('#product-name-input').value;
-    const price = $('#product-price-input').value;
-    const quantity = $('#product-quantity-input').value;
+    const price = Number($('#product-price-input').value);
+    const quantity = Number($('#product-quantity-input').value);
 
     if (
       !validator.validateProductName(name) ||

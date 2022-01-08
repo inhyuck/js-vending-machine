@@ -1,6 +1,7 @@
 import View from '../common/View.js';
 import { $ } from '../utils/index.js';
 import validator from '../utils/validator.js';
+import ProductPurchaseMenuInventory from '../components/ProductPurchaseMenuInventory.js';
 
 export default class ProductPurchaseMenu extends View {
   constructor(props) {
@@ -11,15 +12,24 @@ export default class ProductPurchaseMenu extends View {
   }
 
   chargeAmount() {
-    const extraAmount = $('#charge-input', this.$el).value;
+    const extraAmount = Number($('#charge-input', this.$el).value);
     if (!validator.validateAmountOfCharge(extraAmount)) {
       return;
     }
 
     const { amountOfCharge } = this.state;
     this.setState({
-      amountOfCharge: amountOfCharge + Number(extraAmount),
+      amountOfCharge: amountOfCharge + extraAmount,
     });
+  }
+
+  subtractAmount(amount) {
+    const { amountOfCharge } = this.state;
+    this.setState({
+      amountOfCharge: amountOfCharge - amount,
+    });
+
+    return true;
   }
 
   render() {
@@ -33,25 +43,7 @@ export default class ProductPurchaseMenu extends View {
           <button id="charge-button">충전하기</button>
         </div>
         <p>충전 금액: ${amountOfCharge}원</p>
-        
-        <table class="product-inventory">
-          <colgroup>
-            <col style="width: 140px" />
-            <col style="width: 100px" />
-            <col style="width: 100px" />
-            <col style="width: 100px" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>상품명</th>
-              <th>가격</th>
-              <th>수량</th>
-              <th>구매</th>
-            </tr>
-          </thead>
-          <tbody id="product-inventory-container"></tbody>
-        </table>
-        
+        <div data-component="product-inventory"></div>
         <h3>잔돈</h3>
         <button id="coin-return-button">반환하기</button>
         <table class="cashbox-change">
@@ -86,6 +78,13 @@ export default class ProductPurchaseMenu extends View {
         </table>
       </div>
     `;
+
+    this.components['product-inventory'] = new ProductPurchaseMenuInventory({
+      $el: $('[data-component="product-inventory"]', this.$el),
+      name: 'ProductPurchaseMenuInventory',
+      amountOfCharge,
+      subtractAmount: (amount) => this.subtractAmount(amount),
+    });
   }
 
   bindEvents() {

@@ -5,6 +5,8 @@ import vendingMachineManageService from '../services/vendingMachineManageService
 export const ACTION_ADD_PRODUCT = 'ACTION_ADD_PRODUCT';
 export const ACTION_CHARGE_COINS = 'ACTION_CHARGE_COINS';
 
+export const ACTION_PURCHASE_PRODUCT = 'ACTION_PURCHASE_PRODUCT';
+
 function addProduct(originProducts, newProduct) {
   const originProductIndex = originProducts.findIndex(
     ({ name }) => name === newProduct.name
@@ -24,6 +26,20 @@ function chargeCoins(originCoins, amount) {
   return vendingMachineManageService.mergeCoins(originCoins, newCoins);
 }
 
+function purchaseProduct(originProducts, productName) {
+  const targetProductIndex = originProducts.findIndex(
+    ({ name }) => name === productName
+  );
+  const targetProduct = originProducts[targetProductIndex];
+
+  originProducts.splice(targetProductIndex, 1, {
+    ...targetProduct,
+    quantity: targetProduct.quantity - 1,
+  });
+
+  return originProducts;
+}
+
 class VendingMachineStore extends Store {
   constructor(props) {
     super({ name: 'VendingMachineStore', ...props });
@@ -39,6 +55,11 @@ class VendingMachineStore extends Store {
       case ACTION_CHARGE_COINS:
         return {
           coins: chargeCoins(state.coins, action.payload),
+        };
+
+      case ACTION_PURCHASE_PRODUCT:
+        return {
+          products: purchaseProduct(state.products, action.payload),
         };
 
       default:
