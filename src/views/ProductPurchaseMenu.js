@@ -1,7 +1,30 @@
 import View from '../common/View.js';
+import { $ } from '../utils/index.js';
+import validator from '../utils/validator.js';
 
 export default class ProductPurchaseMenu extends View {
+  constructor(props) {
+    const defaultState = {
+      amountOfCharge: 0,
+    };
+    super(props, defaultState);
+  }
+
+  chargeAmount() {
+    const extraAmount = $('#charge-input', this.$el).value;
+    if (!validator.validateAmountOfCharge(extraAmount)) {
+      return;
+    }
+
+    const { amountOfCharge } = this.state;
+    this.setState({
+      amountOfCharge: amountOfCharge + Number(extraAmount),
+    });
+  }
+
   render() {
+    const { amountOfCharge } = this.state;
+
     this.$el.innerHTML = `
       <div class="purchase-container">
         <h3>충전하기</h3>
@@ -9,7 +32,7 @@ export default class ProductPurchaseMenu extends View {
           <input type="number" name="charge-amount" id="charge-input" />
           <button id="charge-button">충전하기</button>
         </div>
-        <p>충전 금액: <span id="charge-amount">0</span>원</p>
+        <p>충전 금액: ${amountOfCharge}원</p>
         
         <table class="product-inventory">
           <colgroup>
@@ -66,6 +89,11 @@ export default class ProductPurchaseMenu extends View {
   }
 
   bindEvents() {
-    super.bindEvents();
+    this.$el.addEventListener('click', ({ target }) => {
+      if (target.id === 'charge-button') {
+        this.chargeAmount();
+        return;
+      }
+    });
   }
 }

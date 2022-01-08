@@ -2,7 +2,10 @@ const MIN_PRODUCT_PRICE = 100;
 const UNIT_PRODUCT_PRICE = 10;
 const MIN_PRODUCT_QUANTITY = 1;
 
-const MIN_AMOUNT_CHARGE = 100;
+const MIN_AMOUNT_COIN = 100;
+const UNIT_AMOUNT_COIN = 10;
+
+const MIN_AMOUNT_CHARGE = 10;
 const UNIT_AMOUNT_CHARGE = 10;
 
 function validateProductName(name) {
@@ -48,6 +51,20 @@ function validateProductQuantity(quantity) {
 }
 
 function validateVendingMachineAmount(amount) {
+  if (amount < MIN_AMOUNT_COIN) {
+    alert(`최소 충전 금액은 ${MIN_AMOUNT_COIN}원입니다.`);
+    return false;
+  }
+
+  if (amount % UNIT_AMOUNT_COIN > 0) {
+    alert(`충전 금액 단위는 ${UNIT_AMOUNT_COIN}원입니다.`);
+    return false;
+  }
+
+  return true;
+}
+
+function validateAmountOfCharge(amount) {
   if (amount < MIN_AMOUNT_CHARGE) {
     alert(`최소 충전 금액은 ${MIN_AMOUNT_CHARGE}원입니다.`);
     return false;
@@ -66,4 +83,5 @@ export default {
   validateProductPrice,
   validateProductQuantity,
   validateVendingMachineAmount,
+  validateAmountOfCharge,
 };
